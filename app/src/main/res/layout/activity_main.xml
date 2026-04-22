@@ -1,0 +1,30 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:padding="10dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <EditText
+        android:id="@+id/search"
+        android:hint="Search place..."
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <Button
+        android:id="@+id/btnHighToLow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Sort Rating: High → Low"/>
+
+    <Button
+        android:id="@+id/btnLowToHigh"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Sort Rating: Low → High"/>
+
+    <ListView
+        android:id="@+id/listView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+</LinearLayout>
