@@ -1,5 +1,6 @@
 package com.example.test22
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.InputType
@@ -7,6 +8,7 @@ import android.text.TextWatcher
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ListView
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 
@@ -23,7 +25,23 @@ class MainActivity : AppCompatActivity() {
 
     private var hightToLow = false
 
+    lateinit var btnAddPlace: Button
 
+    private val addPlaceLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+
+            if (result.resultCode == RESULT_OK) {
+                val data = result.data
+
+                val name = data?.getStringExtra("name")
+                val rating = data?.getIntExtra("rating", 0) ?: 0
+
+                if (name != null) {
+                    fullList.add(Place(name, rating))
+                    adapter.filter("") // refresh
+                }
+            }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,6 +49,8 @@ class MainActivity : AppCompatActivity() {
 
         btnHigh = findViewById(R.id.btnHighToLow)
         btnLow = findViewById(R.id.btnLowToHigh)
+
+        btnAddPlace = findViewById(R.id.btnAddPlace)
 
         listView = findViewById(R.id.listView)
         search = findViewById(R.id.search)
@@ -45,6 +65,13 @@ class MainActivity : AppCompatActivity() {
 
         adapter = PlaceAdapter(this, fullList)
         listView.adapter = adapter
+
+
+
+        btnAddPlace.setOnClickListener {
+            val intent = Intent(this, AddPlaceActivity::class.java)
+            addPlaceLauncher.launch(intent)
+        }
 
         btnHigh.setOnClickListener {
             adapter.sortByRating(highToLow = true)
@@ -61,5 +88,19 @@ class MainActivity : AppCompatActivity() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == 1 && resultCode == RESULT_OK) {
+            val name = data?.getStringExtra("name")
+            val rating = data?.getIntExtra("rating", 0) ?: 0
+
+            if (name != null) {
+                fullList.add(Place(name, rating))
+                adapter.filter("") // refresh list
+            }
+        }
     }
 }
